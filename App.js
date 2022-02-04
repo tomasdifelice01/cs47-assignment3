@@ -3,6 +3,8 @@ import { ResponseType, useAuthRequest } from "expo-auth-session";
 import { myTopTracks, albumTracks } from "./utils/apiOptions";
 import { REDIRECT_URI, SCOPES, CLIENT_ID, ALBUM_ID } from "./utils/constants";
 import Colors from "./Themes/colors";
+import images from "./Themes/images";
+
 import {
   StyleSheet,
   Text,
@@ -14,6 +16,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Pressable,
 } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-web";
 import millisToMinutesAndSeconds from "./utils/millisToMinuteSeconds";
@@ -61,12 +64,11 @@ export default function App() {
 
   function SpotifyButton() {
     return (
-      <Button
-        style={styles.button}
-        // pressing the add button calls our addTodo function
-        title="Spotify Button"
-        onPress={promptAsync}
-      />
+      <Pressable style={styles.button} onPress={promptAsync}>
+        <Image style={styles.buttonLogo} source={images.spotify} />
+
+        <Text style={styles.buttonText}>CONNECT WITH SPOTIFY</Text>
+      </Pressable>
     );
   }
 
@@ -99,18 +101,18 @@ export default function App() {
   function Song(props) {
     console.log(props.albumImage);
     return (
-      <View style={styles.songContainer}>
+      <SafeAreaView style={styles.songContainer}>
         <View style={styles.songIndex}>
-          <Text>{props.index}</Text>
+          <Text style={styles.indexText}>{props.index}</Text>
         </View>
         <View style={styles.songImage}>
-          <Image styles={styles.image} source={{ uri: props.albumImage }} />
+          <Image style={styles.image} source={{ uri: props.albumImage }} />
         </View>
         <View style={styles.songTitle}>
           <Text numberOfLines={1} style={styles.textStandard}>
             {props.title}
           </Text>
-          <Text numberOfLines={1} style={styles.textStandard}>
+          <Text numberOfLines={1} style={styles.textGrayed}>
             {props.artists}
           </Text>
         </View>
@@ -124,22 +126,26 @@ export default function App() {
             {millisToMinutesAndSeconds(props.duration)}
           </Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
   componentToDisplay = null;
   if (!token) {
     componentToDisplay = <SpotifyButton />;
   } else {
-    componentToDisplay = <SongList />;
+    componentToDisplay = (
+      <View style={styles.displayContainer}>
+        <View style={styles.header}>
+          <Image style={styles.spotifyLogo} source={images.spotify} />
+          <Text style={styles.headerText}>My Top tracks</Text>
+        </View>
+        <SongList />
+      </View>
+    );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={{ color: "white" }}>Welcome to Assignment 3 - Spotify</Text>
-
-      {componentToDisplay}
-    </SafeAreaView>
+    <SafeAreaView style={styles.container}>{componentToDisplay}</SafeAreaView>
   );
 }
 
@@ -150,35 +156,82 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
-  button: {
+  displayContainer: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  spotifyLogo: {
+    width: 21,
+    height: "90%",
+    resizeMode: "contain",
+    marginRight: 5,
+  },
+  header: {
     height: 40,
-    width: "20%",
-    borderColor: "gray",
+    display: "flex",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  headerText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 23,
+    marginHorizontal: 5,
+  },
+  button: {
+    display: "flex",
+    flexDirection: "row",
+    height: 35,
+    width: "55%",
+    backgroundColor: Colors.spotify,
     borderWidth: 1,
+    borderRadius: 99999,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: 13,
+    color: "white",
+    fontWeight: "800",
+  },
+  buttonLogo: {
+    width: 17,
+    height: "90%",
+    resizeMode: "contain",
+    marginRight: 5,
   },
   songContainer: {
     display: "flex",
     flexDirection: "row",
     backgroundColor: Colors.background,
     width: "100%",
-    height: 50,
+    height: 70,
     alignSelf: "center",
     justifyContent: "space-around",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
+    marginVertical: 1,
   },
-  index: {
-    width: "10%",
+  songIndex: {
+    width: "5%",
     color: "white",
+    alignSelf: "center",
   },
   songImage: {
-    width: "20%",
+    width: "21%",
     color: "white",
   },
   image: {
-    width: "100%",
-    height: "100%",
+    width: "95%",
+    height: "86%",
     resizeMode: "contain",
+    alignSelf: "center",
   },
   songTitle: {
     width: "32.5%",
@@ -186,16 +239,32 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    paddingRight: 8,
   },
   songAlbum: {
-    width: "27.5%",
+    width: "25%",
     color: "white",
+    paddingRight: 5,
   },
   songDuration: {
-    width: "10%",
+    width: "11.5%",
     color: "white",
   },
   textStandard: {
+    fontSize: 13,
     color: "white",
+    fontWeight: "300",
+  },
+  textGrayed: {
+    fontSize: 12,
+    color: Colors.gray,
+    fontWeight: "200",
+  },
+  indexText: {
+    fontSize: 12,
+    color: "white",
+    fontWeight: "200",
+    textAlign: "center",
+    paddingLeft: 5,
   },
 });

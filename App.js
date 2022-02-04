@@ -91,7 +91,7 @@ export default function App() {
         index={index + 1}
         title={item.name}
         duration={item.duration_ms}
-        artists={item.artists[0].name}
+        artists={item.artists}
         albumImage={item.album.images[0].url}
         albumName={item.album.name}
       />
@@ -112,8 +112,18 @@ export default function App() {
           <Text numberOfLines={1} style={styles.textStandard}>
             {props.title}
           </Text>
-          <Text numberOfLines={1} style={styles.textGrayed}>
-            {props.artists}
+          <Text numberOfLines={2}>
+            {props.artists.map((artistObj, index) => {
+              return index != props.artists.length - 1 ? (
+                <Text numberOfLines={1} style={styles.textGrayed}>
+                  {artistObj.name},
+                </Text>
+              ) : (
+                <Text numberOfLines={1} style={styles.textGrayed}>
+                  {artistObj.name}
+                </Text>
+              );
+            })}
           </Text>
         </View>
         <View style={styles.songAlbum}>
@@ -240,6 +250,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     paddingRight: 8,
+  },
+  songArtists: {
+    maxHeight: 10,
   },
   songAlbum: {
     width: "25%",

@@ -251,9 +251,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingRight: 8,
   },
-  songArtists: {
-    maxHeight: 10,
-  },
   songAlbum: {
     width: "25%",
     color: "white",
